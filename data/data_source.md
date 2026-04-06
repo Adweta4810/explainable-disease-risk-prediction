@@ -2,8 +2,7 @@
 
 ## Chronic Kidney Disease (CKD)
 - Data was taken from the UCI Machine Learning Repository:  
-  https://archive.ics.uci.edu/dataset/336/chronic+kidney+disease  
-- Files downloaded: `chronic_kidney_disease_full.arff` and `chronic_kidney_disease.arff`
+https://www.kaggle.com/datasets/mansoordaku/ckdisease?resource=download- Files downloaded: `chronic_kidney_disease_full.arff` and `chronic_kidney_disease.arff`
 
 ## Diabetes
 - Data was taken from Kaggle (Pima Indians Diabetes Database):  
