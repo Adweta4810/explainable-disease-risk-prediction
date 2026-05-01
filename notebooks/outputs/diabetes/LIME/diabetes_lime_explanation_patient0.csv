@@ -1,0 +1,9 @@
+Feature condition,Contribution,Effect
+Glucose > 0.60,0.40248737262107387,Supports Diabetes prediction
+BMI <= -0.70,-0.2590355234612117,Supports No Diabetes prediction
+-0.24 < Insulin <= -0.18,0.07064339591564586,Supports Diabetes prediction
+-0.36 < Age <= 0.66,0.07031055283392237,Supports Diabetes prediction
+-0.69 < DiabetesPedigreeFunction <= -0.27,-0.04456415486383577,Supports No Diabetes prediction
+Pregnancies > 0.64,0.037338853152011686,Supports Diabetes prediction
+BloodPressure <= -0.69,-0.03239250364373597,Supports No Diabetes prediction
+-0.47 < SkinThickness <= -0.01,-0.005451291369939661,Supports No Diabetes prediction
