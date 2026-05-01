@@ -1,0 +1,7 @@
+Dataset,Model,Accuracy,Precision,Recall,F1-Score,ROC-AUC
+CKD,Logistic Regression,0.8875,1.0,0.82,0.9011,1.0
+CKD,Random Forest,1.0,1.0,1.0,1.0,1.0
+CKD,XGBoost,1.0,1.0,1.0,1.0,1.0
+Diabetes,Logistic Regression,0.7078,0.5738,0.6481,0.6087,0.8083
+Diabetes,Random Forest,0.7208,0.5797,0.7407,0.6504,0.8137
+Diabetes,XGBoost,0.7273,0.5857,0.7593,0.6613,0.8231
