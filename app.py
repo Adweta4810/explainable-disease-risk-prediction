@@ -66,22 +66,71 @@ DIABETES_ZERO_IMP_MEDIANS = {
 
 st.markdown("""
 <style>
-.stApp{background:linear-gradient(120deg,#f7fbf8,#ffffff);color:#0f172a}
-section[data-testid="stSidebar"]{background:linear-gradient(180deg,#064d25,#033d1d)}
-section[data-testid="stSidebar"] *{color:white !important}
-.card{background:white;padding:22px;border-radius:22px;border:1px solid #e5e7eb;box-shadow:0 10px 30px rgba(15,23,42,.07);margin-bottom:18px}
-.logo{font-size:30px;font-weight:800;margin-bottom:25px}
-.logo span{color:#9df071}
-.hero-title{font-size:34px;font-weight:800}
-.hero-subtitle{color:#667085;font-size:16px;margin-bottom:25px}
-.kpi-value{font-size:40px;font-weight:800;color:#087331}
-.low{color:#166534;background:#dcfce7;padding:6px 12px;border-radius:999px;font-weight:700}
-.moderate{color:#b45309;background:#fef3c7;padding:6px 12px;border-radius:999px;font-weight:700}
-.high{color:#b91c1c;background:#fee2e2;padding:6px 12px;border-radius:999px;font-weight:700}
-.stButton button{background:#087331 !important;color:white !important;border-radius:12px !important;border:none !important;font-weight:700 !important}
+/* ── Light mode ─────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+    .stApp { background: linear-gradient(120deg,#f7fbf8,#ffffff); color:#0f172a; }
+    .card  { background: white; border:1px solid #e5e7eb; color:#0f172a;
+             box-shadow:0 10px 30px rgba(15,23,42,.07); }
+    .hero-subtitle { color:#667085; }
+    .kpi-value     { color:#087331; }
+}
+
+/* ── Dark mode ──────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    .stApp { background: linear-gradient(120deg,#0d1f14,#0a1a0f); color:#e2e8f0; }
+    .card  { background: #1a2e20; border:1px solid #2d4a35; color:#e2e8f0;
+             box-shadow:0 10px 30px rgba(0,0,0,.3); }
+    .hero-subtitle { color:#94a3b8; }
+    .kpi-value     { color:#4ade80; }
+}
+
+/* ── Streamlit dark theme overrides ────────────────────── */
+[data-testid="stAppViewContainer"] > .main { background: transparent !important; }
+
+/* ── Sidebar (always dark green) ───────────────────────── */
+section[data-testid="stSidebar"] { background:linear-gradient(180deg,#064d25,#033d1d) !important; }
+section[data-testid="stSidebar"] * { color:white !important; }
+
+/* ── Shared styles ──────────────────────────────────────── */
+.card { padding:22px; border-radius:22px; margin-bottom:18px; }
+.logo { font-size:30px; font-weight:800; margin-bottom:25px; }
+.logo span { color:#9df071; }
+.hero-title { font-size:34px; font-weight:800; }
+.hero-subtitle { font-size:16px; margin-bottom:25px; }
+.kpi-value { font-size:40px; font-weight:800; }
+
+/* ── Risk badges ────────────────────────────────────────── */
+.low      { color:#166534; background:#dcfce7; padding:6px 12px; border-radius:999px; font-weight:700; }
+.moderate { color:#854d0e; background:#fef9c3; padding:6px 12px; border-radius:999px; font-weight:700; }
+.high     { color:#991b1b; background:#fee2e2; padding:6px 12px; border-radius:999px; font-weight:700; }
+
+/* ── Button ─────────────────────────────────────────────── */
+.stButton button {
+    background:#087331 !important; color:white !important;
+    border-radius:12px !important; border:none !important; font-weight:700 !important;
+}
+
+/* ── Input fields dark mode ─────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
+        background:#1a2e20 !important; color:#e2e8f0 !important;
+        border-color:#2d4a35 !important;
+    }
+    .stDataFrame { background:#1a2e20 !important; }
+    label { color:#e2e8f0 !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
+
+def plotly_layout(**kwargs):
+    """Returns a layout dict that works in both light and dark mode."""
+    return dict(
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(color=None),   # inherits from Streamlit theme
+        **kwargs
+    )
 
 @st.cache_resource
 def load_model(path):
@@ -285,7 +334,7 @@ elif page == "Explainability":
             marker=dict(color=imp_df["Mean |SHAP|"],colorscale=[[0,"#dcfce7"],[0.5,"#2ea85a"],[1,"#064d25"]],showscale=False),
             text=[f"{v:.4f}" for v in imp_df["Mean |SHAP|"]],textposition="outside"))
         bar_shap.update_layout(height=420,margin=dict(t=10,b=10,l=10,r=60),
-                               plot_bgcolor="white",paper_bgcolor="white",xaxis_title="Mean |SHAP Value|")
+                               plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",xaxis_title="Mean |SHAP Value|")
         st.plotly_chart(bar_shap, key="shap_global_bar")
     else:
         st.warning("shap_roc_data.json not found. Place it in the same folder as app.py.")
@@ -318,7 +367,7 @@ elif page == "Explainability":
         bee_fig.update_layout(
             height=500,xaxis_title="SHAP Value (impact on model output)",
             yaxis=dict(tickvals=list(range(len(feat_labels))),ticktext=feat_labels),
-            plot_bgcolor="white",paper_bgcolor="white",margin=dict(t=10,b=10,l=10,r=10),
+            plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",margin=dict(t=10,b=10,l=10,r=10),
             shapes=[dict(type="line",x0=0,x1=0,y0=-0.5,y1=len(feat_labels)-0.5,
                          line=dict(color="#aaa",dash="dash",width=1))])
         st.plotly_chart(bee_fig, key="shap_beeswarm")
@@ -370,7 +419,7 @@ elif page == "Explainability":
                 wf_fig.update_layout(
                     height=420,title=f"Base value: {base_val:.3f}  \u2192  Prediction: {prob/100:.3f}",
                     xaxis_title="SHAP contribution (red=toward disease, green=away)",
-                    plot_bgcolor="white",paper_bgcolor="white",margin=dict(t=40,b=10,l=10,r=60),
+                    plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",margin=dict(t=40,b=10,l=10,r=60),
                     shapes=[dict(type="line",x0=0,x1=0,y0=-0.5,y1=len(contrib_df)-0.5,
                                  line=dict(color="#aaa",dash="dash",width=1))])
                 st.plotly_chart(wf_fig, key="shap_waterfall")
@@ -439,7 +488,7 @@ elif page == "Model Performance":
         bar_fig.add_trace(go.Bar(name=mn,x=[mn],y=[m[metric_choice]],marker_color=PALETTE[i],
                                  text=[f"{m[metric_choice]:.4f}"],textposition="outside"))
     bar_fig.update_layout(yaxis=dict(range=[0,1.1],title=metric_choice),
-                          plot_bgcolor="white",paper_bgcolor="white",showlegend=False,height=350,margin=dict(t=20,b=20))
+                          plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",showlegend=False,height=350,margin=dict(t=20,b=20))
     st.plotly_chart(bar_fig, key="perf_bar_chart")
     st.markdown('</div>',unsafe_allow_html=True)
 
@@ -456,7 +505,7 @@ elif page == "Model Performance":
         roc_fig.add_trace(go.Scatter(x=[0,1],y=[0,1],mode="lines",
                                      line=dict(color="#aaa",dash="dash",width=1),name="Random Classifier"))
         roc_fig.update_layout(xaxis_title="False Positive Rate",yaxis_title="True Positive Rate",
-                              height=420,plot_bgcolor="white",paper_bgcolor="white",
+                              height=420,plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",
                               legend=dict(x=0.55,y=0.1),margin=dict(t=10,b=10,l=10,r=10))
         st.plotly_chart(roc_fig, key="perf_roc_curves")
     else:
