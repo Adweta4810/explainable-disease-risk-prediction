@@ -13,7 +13,15 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Project outputs (recommended)
+# Project outputs
 models/
 data/processed/
 reports/figures/
+outputs/
+
+# VS Code / Dev Container
+.devcontainer/
+.vscode/
+
+# Git attributes
+.gitattributes
