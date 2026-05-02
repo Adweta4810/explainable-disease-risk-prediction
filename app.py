@@ -445,7 +445,7 @@ elif page == "Explainability":
             import pandas as _pd2
 
             if disease == "CKD":
-                train_df   = pd.read_csv(os.path.join(BASE_DIR, "data", "chronic_kidney_disease", "ckd_cleaned.csv"))
+                train_df   = pd.read_csv(os.path.join(BASE_DIR, "data", "Chronic_Kidney_Disease", "ckd_cleaned.csv"))
                 X_train_l  = train_df.drop(columns=["classification"])
                 feat_list  = CKD_FEATURES
                 cls_names  = ["Not CKD", "CKD"]
@@ -457,7 +457,7 @@ elif page == "Explainability":
                 patient_arr = np.array([enc[f] for f in feat_list])
 
             else:
-                train_df   = pd.read_csv(os.path.join(BASE_DIR, "data", "diabetes", "diabetes_cleaned.csv"))
+                train_df   = pd.read_csv(os.path.join(BASE_DIR, "data", "Diabetes", "diabetes_cleaned.csv"))
                 X_train_l  = train_df.drop(columns=["Outcome"])
                 feat_list  = DIABETES_FEATURES
                 cls_names  = ["No Diabetes", "Diabetes"]
