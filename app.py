@@ -428,6 +428,103 @@ elif page == "Explainability":
     else:
         st.info("💡 Run a prediction first on the Prediction page — then come back here for a patient-specific SHAP explanation.")
     st.markdown('</div>',unsafe_allow_html=True)
+
+    # ── LIME Per-Patient Explanation ─────────────────────────────────────────
+    st.markdown('<div class="card">',unsafe_allow_html=True)
+    st.subheader("🍋 LIME Per-Patient Explanation")
+    st.caption("LIME fits a simple local model around this patient to explain the prediction. Each bar shows how much a feature pushed the prediction toward or away from disease.")
+
+    if "latest_result" in st.session_state and st.session_state["latest_result"]["Disease"] == disease:
+        result      = st.session_state["latest_result"]
+        prob        = result["Risk Percentage"]
+        level_label = result["Risk Level"]
+        st.success(f"Using last prediction — {level_label} ({prob:.2f}%)")
+
+        try:
+            from lime.lime_tabular import LimeTabularExplainer as _LimeExplainer
+            import pandas as _pd2
+
+            if disease == "CKD":
+                train_df   = pd.read_csv(os.path.join(BASE_DIR, "data", "chronic_kidney_disease", "ckd_cleaned.csv"))
+                X_train_l  = train_df.drop(columns=["classification"])
+                feat_list  = CKD_FEATURES
+                cls_names  = ["Not CKD", "CKD"]
+                m = load_model(CKD_MODEL_PATHS["Random Forest"])
+
+                enc = {feat:(float(CKD_BINARY_FEATURES[feat].get(str(result.get(feat,0)), result.get(feat,0)))
+                             if feat in CKD_BINARY_FEATURES else float(result.get(feat,0)))
+                       for feat in CKD_FEATURES}
+                patient_arr = np.array([enc[f] for f in feat_list])
+
+            else:
+                train_df   = pd.read_csv(os.path.join(BASE_DIR, "data", "diabetes", "diabetes_cleaned.csv"))
+                X_train_l  = train_df.drop(columns=["Outcome"])
+                feat_list  = DIABETES_FEATURES
+                cls_names  = ["No Diabetes", "Diabetes"]
+                m = load_model(DIABETES_MODEL_PATHS["XGBoost"])
+
+                patient_arr = preprocess_diabetes_input(
+                    {f: result.get(f, 0) for f in DIABETES_FEATURES}
+                ).values[0]
+
+            lime_exp_obj = _LimeExplainer(
+                training_data=X_train_l.values,
+                feature_names=feat_list,
+                class_names=cls_names,
+                mode="classification",
+                discretize_continuous=True,
+                random_state=42,
+            )
+
+            explanation = lime_exp_obj.explain_instance(
+                data_row=patient_arr,
+                predict_fn=m.predict_proba,
+                num_features=10,
+            )
+
+            lime_list = explanation.as_list()
+            lime_df   = pd.DataFrame(lime_list, columns=["Feature Condition", "Contribution"])
+            lime_df   = lime_df.sort_values("Contribution")
+            colors_lime = ["#b91c1c" if v > 0 else "#166534" for v in lime_df["Contribution"]]
+
+            lime_fig = go.Figure(go.Bar(
+                x=lime_df["Contribution"],
+                y=lime_df["Feature Condition"],
+                orientation="h",
+                marker_color=colors_lime,
+                text=[f"{v:+.4f}" for v in lime_df["Contribution"]],
+                textposition="outside",
+            ))
+            lime_fig.update_layout(
+                height=420,
+                title=f"LIME Local Explanation — {level_label} ({prob:.2f}%)",
+                xaxis_title="Contribution (red = toward disease, green = away from disease)",
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                margin=dict(t=40, b=10, l=10, r=60),
+                shapes=[dict(type="line", x0=0, x1=0, y0=-0.5, y1=len(lime_df)-0.5,
+                             line=dict(color="#aaa", dash="dash", width=1))],
+            )
+            st.plotly_chart(lime_fig, key="lime_waterfall")
+
+            # LIME vs SHAP comparison note
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.subheader("⚖️ SHAP vs LIME — Key Differences")
+            comp_df = pd.DataFrame({
+                "":          ["Approach", "Scope", "Stability", "Best for"],
+                "SHAP 🔵":  ["Game-theory (Shapley values)", "Global + per-patient", "High — consistent results", "Understanding overall model behaviour"],
+                "LIME 🟡":  ["Local linear approximation", "Per-patient only", "Can vary between runs", "Quick local explanation per patient"],
+            })
+            st.table(comp_df.set_index(""))
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        except FileNotFoundError:
+            st.warning("Training data CSV not found. LIME needs the cleaned dataset files in the data/ folder.")
+        except Exception as e:
+            st.error(f"Could not compute LIME explanation: {e}")
+    else:
+        st.info("💡 Run a prediction first on the Prediction page — then come back here for a LIME explanation.")
+
+    st.markdown('</div>',unsafe_allow_html=True)
     st.info(DISCLAIMER)
 
 
