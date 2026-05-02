@@ -629,18 +629,34 @@ elif page == "Model Performance":
             st.plotly_chart(heatmap, key=f"cm_{disease_tab}_{idx}")
     st.markdown('</div>',unsafe_allow_html=True)
 
-    # Gauges
+    # Gauges — show CV AUC (more realistic than test AUC)
+    CKD_CV_AUC = {
+        "Logistic Regression": 1.0000,
+        "Random Forest":       0.9998,
+        "XGBoost":             0.9988,
+    }
+    DIABETES_CV_AUC = {
+        "Logistic Regression": 0.8443,
+        "Random Forest":       0.8397,
+        "XGBoost":             0.8359,
+    }
+    cv_auc_dict = CKD_CV_AUC if disease_tab=="CKD" else DIABETES_CV_AUC
+
     st.markdown('<div class="card">',unsafe_allow_html=True)
-    st.subheader("🎯 ROC-AUC Gauges")
+    st.subheader("🎯 Cross-Validation ROC-AUC Gauges")
+    st.caption("Showing 5-Fold CV AUC — more realistic estimate of generalisation performance")
     g_cols = st.columns(3)
     for idx,(col,(mn_g,m)) in enumerate(zip(g_cols,metrics_dict.items())):
         with col:
+            cv_val = round(cv_auc_dict[mn_g]*100,2)
             g = go.Figure(go.Indicator(
-                mode="gauge+number",value=round(m["ROC_AUC"]*100,2),
+                mode="gauge+number",value=cv_val,
                 title={"text":mn_g,"font":{"size":13}},
+                number={"suffix":"%","font":{"size":28}},
                 gauge={"axis":{"range":[0,100]},"bar":{"color":"#087331"},
                        "steps":[{"range":[0,60],"color":"#fee2e2"},{"range":[60,80],"color":"#fef3c7"},{"range":[80,100],"color":"#dcfce7"}]}))
-            g.update_layout(height=220,margin=dict(t=30,b=10,l=10,r=10))
+            g.update_layout(height=220,margin=dict(t=30,b=10,l=10,r=10),
+                            plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)")
             st.plotly_chart(g, key=f"gauge_{disease_tab}_{idx}")
     st.markdown('</div>',unsafe_allow_html=True)
 
