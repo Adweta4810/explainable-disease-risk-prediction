@@ -13,7 +13,6 @@ Usage
 
 import sys
 import os
-import traceback
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT_DIR)
@@ -34,109 +33,90 @@ def check(label, fn):
         results.append((label, False, e))
 
 
-# ──────────────────────────────────────────────
 print("\n" + "=" * 56)
 print("  SRC MODULE SMOKE TEST")
 print("=" * 56)
 
-# ── data_preprocessing ────────────────────────
+# ── data_preprocessing ────────────────────────────────────
 print("\n[ data_preprocessing ]")
-check("import module",
-      lambda: __import__("src.data_preprocessing", fromlist=["*"]))
 
-check("preprocess_ckd callable", lambda: (
-    __import__("src.data_preprocessing", fromlist=["preprocess_ckd"]),
-    callable(getattr(sys.modules["src.data_preprocessing"], "preprocess_ckd"))
-))
-check("preprocess_diabetes callable", lambda: (
-    callable(getattr(sys.modules["src.data_preprocessing"], "preprocess_diabetes"))
-))
-check("load_cleaned_ckd callable", lambda: (
-    callable(getattr(sys.modules["src.data_preprocessing"], "load_cleaned_ckd"))
-))
-check("load_cleaned_diabetes callable", lambda: (
-    callable(getattr(sys.modules["src.data_preprocessing"], "load_cleaned_diabetes"))
-))
+import src.data_preprocessing as dp
+check("import module", lambda: None)
+check("preprocess_ckd callable",        lambda: callable(dp.preprocess_ckd))
+check("preprocess_diabetes callable",   lambda: callable(dp.preprocess_diabetes))
+check("load_cleaned_ckd callable",      lambda: callable(dp.load_cleaned_ckd))
+check("load_cleaned_diabetes callable", lambda: callable(dp.load_cleaned_diabetes))
 
-# ── model_training ────────────────────────────
+# ── model_training ────────────────────────────────────────
 print("\n[ model_training ]")
-check("import module",
-      lambda: __import__("src.model_training", fromlist=["*"]))
 
-for fn_name in [
-    "train_all_models", "load_models",
-    "build_logistic_regression", "build_random_forest", "build_xgboost",
-]:
-    check(f"{fn_name} callable", lambda n=fn_name: (
-        callable(getattr(sys.modules["src.model_training"], n))
-    ))
+import src.model_training as mt
+check("import module", lambda: None)
+check("train_all_models callable",         lambda: callable(mt.train_all_models))
+check("load_models callable",              lambda: callable(mt.load_models))
+check("build_logistic_regression callable",lambda: callable(mt.build_logistic_regression))
+check("build_random_forest callable",      lambda: callable(mt.build_random_forest))
+check("build_xgboost callable",            lambda: callable(mt.build_xgboost))
 
-# ── evaluation ────────────────────────────────
+# ── evaluation ────────────────────────────────────────────
 print("\n[ evaluation ]")
-check("import module",
-      lambda: __import__("src.evaluation", fromlist=["*"]))
 
-for fn_name in [
-    "compute_metrics", "evaluate_all_models", "overfitting_check",
-    "plot_confusion_matrices", "plot_roc_curves",
-    "plot_calibration_curves", "plot_feature_importances",
-    "save_results_csv",
-]:
-    check(f"{fn_name} callable", lambda n=fn_name: (
-        callable(getattr(sys.modules["src.evaluation"], n))
-    ))
+import src.evaluation as ev
+check("import module", lambda: None)
+check("compute_metrics callable",         lambda: callable(ev.compute_metrics))
+check("evaluate_all_models callable",     lambda: callable(ev.evaluate_all_models))
+check("overfitting_check callable",       lambda: callable(ev.overfitting_check))
+check("plot_confusion_matrices callable", lambda: callable(ev.plot_confusion_matrices))
+check("plot_roc_curves callable",         lambda: callable(ev.plot_roc_curves))
+check("plot_calibration_curves callable", lambda: callable(ev.plot_calibration_curves))
+check("plot_feature_importances callable",lambda: callable(ev.plot_feature_importances))
+check("save_results_csv callable",        lambda: callable(ev.save_results_csv))
 
-# ── shap_explainer ────────────────────────────
+# ── shap_explainer ────────────────────────────────────────
 print("\n[ shap_explainer ]")
-check("import module",
-      lambda: __import__("src.shap_explainer", fromlist=["*"]))
 
-check("SHAPExplainer is a class", lambda: (
-    isinstance(sys.modules["src.shap_explainer"].SHAPExplainer, type)
-))
-
+import src.shap_explainer as se
+check("import module", lambda: None)
+check("SHAPExplainer is a class", lambda: isinstance(se.SHAPExplainer, type))
 for method in [
     "compute_shap_values", "plot_summary", "plot_feature_importance_bar",
     "plot_force", "plot_waterfall", "plot_dependence",
     "get_importance_table", "run_full_explanation",
 ]:
-    check(f"SHAPExplainer.{method} exists", lambda m=method: (
-        callable(getattr(sys.modules["src.shap_explainer"].SHAPExplainer, m))
-    ))
+    check(f"SHAPExplainer.{method} exists",
+          lambda m=method: callable(getattr(se.SHAPExplainer, m)))
 
-# ── lime_explainer ────────────────────────────
+# ── lime_explainer ────────────────────────────────────────
 print("\n[ lime_explainer ]")
-check("import module",
-      lambda: __import__("src.lime_explainer", fromlist=["*"]))
 
-check("LIMEExplainer is a class", lambda: (
-    isinstance(sys.modules["src.lime_explainer"].LIMEExplainer, type)
-))
-
+import src.lime_explainer as le
+check("import module", lambda: None)
+check("LIMEExplainer is a class", lambda: isinstance(le.LIMEExplainer, type))
 for method in [
     "explain_patient", "explain_multiple_patients",
     "run_stability_check", "global_feature_importance",
 ]:
-    check(f"LIMEExplainer.{method} exists", lambda m=method: (
-        callable(getattr(sys.modules["src.lime_explainer"].LIMEExplainer, m))
-    ))
+    check(f"LIMEExplainer.{method} exists",
+          lambda m=method: callable(getattr(le.LIMEExplainer, m)))
 
-# ── third-party dependencies ──────────────────
+# ── third-party dependencies ──────────────────────────────
 print("\n[ third-party dependencies ]")
+
 for pkg, import_name in [
-    ("pandas",            "pandas"),
-    ("numpy",             "numpy"),
-    ("scikit-learn",      "sklearn"),
-    ("imbalanced-learn",  "imblearn"),
-    ("xgboost",           "xgboost"),
-    ("shap",              "shap"),
-    ("lime",              "lime"),
-    ("matplotlib",        "matplotlib"),
-    ("seaborn",           "seaborn"),
+    ("pandas",           "pandas"),
+    ("numpy",            "numpy"),
+    ("scikit-learn",     "sklearn"),
+    ("imbalanced-learn", "imblearn"),
+    ("xgboost",          "xgboost"),
+    ("shap",             "shap"),
+    ("lime",             "lime"),
+    ("matplotlib",       "matplotlib"),
+    ("seaborn",          "seaborn"),
+    ("joblib",           "joblib"),
 ]:
     check(f"{pkg}", lambda m=import_name: __import__(m))
 
-# ── Summary ───────────────────────────────────
+# ── Summary ───────────────────────────────────────────────
 print("\n" + "=" * 56)
 passed = sum(1 for _, ok, _ in results if ok)
 failed = sum(1 for _, ok, _ in results if not ok)

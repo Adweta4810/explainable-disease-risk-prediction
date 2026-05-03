@@ -538,8 +538,9 @@ elif page == "Explainability":
                         showscale=False),
             text=[f"{v:.4f}" for v in imp_df["Mean |SHAP|"]], textposition="outside",
         ))
-        bar_shap.update_layout(height=420, margin=dict(t=10,b=10,l=10,r=60),
-                               xaxis_title="Mean |SHAP Value|", **plotly_theme())
+        theme = plotly_theme()
+        theme["xaxis"]["title"] = "Mean |SHAP Value|"
+        bar_shap.update_layout(height=420, margin=dict(t=10,b=10,l=10,r=60), **theme)
         st.plotly_chart(bar_shap, key="shap_global_bar")
     else:
         st.warning("shap_roc_data.json not found. Place it in the same folder as app.py.")
@@ -570,12 +571,15 @@ elif page == "Explainability":
                 customdata=fv_col,
             ))
         feat_labels = [feat_names[fi] for fi in reversed(order)]
+        theme = plotly_theme()
+        theme["xaxis"]["title"] = "SHAP Value (impact on model output)"
+        theme["yaxis"]["tickvals"] = list(range(len(feat_labels)))
+        theme["yaxis"]["ticktext"] = feat_labels
         bee_fig.update_layout(
-            height=500, xaxis_title="SHAP Value (impact on model output)",
-            yaxis=dict(tickvals=list(range(len(feat_labels))), ticktext=feat_labels),
+            height=500,
             margin=dict(t=10,b=10,l=10,r=10),
             shapes=[zeroline(len(feat_labels))],
-            **plotly_theme(),
+            **theme,
         )
         st.plotly_chart(bee_fig, key="shap_beeswarm")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -631,14 +635,15 @@ elif page == "Explainability":
                 text=[f"{v:+.4f}" for v in contrib_df["SHAP"]], textposition="outside",
             ))
             title_color = "#4ade80" if is_dark() else "#087331"
+            theme = plotly_theme()
+            theme["xaxis"]["title"] = "SHAP contribution (red = toward disease, green = away)"
             wf_fig.update_layout(
                 height=420,
                 title=dict(text=f"Base value: {base_val:.3f}  →  Prediction: {prob/100:.3f}",
                            font=dict(color=title_color)),
-                xaxis_title="SHAP contribution (red = toward disease, green = away)",
                 margin=dict(t=40,b=10,l=10,r=60),
                 shapes=[zeroline(len(contrib_df))],
-                **plotly_theme(),
+                **theme,
             )
             st.plotly_chart(wf_fig, key="shap_waterfall")
         except Exception as e:
@@ -693,14 +698,15 @@ elif page == "Explainability":
                 textposition="outside",
             ))
             title_color = "#4ade80" if is_dark() else "#087331"
+            theme = plotly_theme()
+            theme["xaxis"]["title"] = "Contribution (red = toward disease, green = away from disease)"
             lime_fig.update_layout(
                 height=420,
                 title=dict(text=f"LIME Local Explanation — {level_label} ({prob:.2f}%)",
                            font=dict(color=title_color)),
-                xaxis_title="Contribution (red = toward disease, green = away from disease)",
                 margin=dict(t=40,b=10,l=10,r=60),
                 shapes=[zeroline(len(lime_df))],
-                **plotly_theme(),
+                **theme,
             )
             st.plotly_chart(lime_fig, key="lime_waterfall")
 
@@ -811,10 +817,12 @@ elif page == "Model Performance":
             line=dict(color="#94a3b8" if is_dark() else "#9ca3af", dash="dash", width=1),
             name="Random Classifier",
         ))
+        theme = plotly_theme()
+        theme["xaxis"]["title"] = "False Positive Rate"
+        theme["yaxis"]["title"] = "True Positive Rate"
         roc_fig.update_layout(
-            xaxis_title="False Positive Rate", yaxis_title="True Positive Rate",
             height=420, legend=dict(x=0.55, y=0.1), margin=dict(t=10,b=10,l=10,r=10),
-            **plotly_theme(),
+            **theme,
         )
         st.plotly_chart(roc_fig, key="perf_roc_curves")
     else:
