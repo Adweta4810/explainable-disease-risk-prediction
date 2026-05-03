@@ -124,116 +124,258 @@ def cm_text_color():
 def inject_theme_css():
     dark = is_dark()
 
-    # Token values for the active theme
-    app_bg      = "linear-gradient(135deg,#0d1f14,#0a1a0f)" if dark else "linear-gradient(135deg,#f7fbf8,#ffffff)"
-    app_color   = "#e2e8f0"   if dark else "#0f172a"
-    card_bg     = "#1a2e20"   if dark else "#ffffff"
-    card_border = "#2d4a35"   if dark else "#e5e7eb"
-    card_shadow = "rgba(0,0,0,.35)" if dark else "rgba(15,23,42,.07)"
-    card_color  = "#e2e8f0"   if dark else "#0f172a"
-    sub_color   = "#94a3b8"   if dark else "#667085"
-    kpi_color   = "#4ade80"   if dark else "#087331"
-    logo_accent = "#9df071"   if dark else "#087331"
-    h_color     = "#d1fae5"   if dark else "#0f172a"
-    label_color = "#cbd5e1"   if dark else "#374151"
-    inp_bg      = "#132218"   if dark else "#ffffff"
-    inp_border  = "#2d4a35"   if dark else "#d1d5db"
-    inp_color   = "#e2e8f0"   if dark else "#0f172a"
-    df_bg       = "#1a2e20"   if dark else "#ffffff"
-    df_th_bg    = "#0f2417"   if dark else "#f9fafb"
-    df_th_color = "#d1fae5"   if dark else "#111827"
-    df_td_color = "#e2e8f0"   if dark else "#374151"
-    toggle_bg   = "#1a2e20"   if dark else "#f0fdf4"
-    toggle_bdr  = "#4ade80"   if dark else "#087331"
-    toggle_txt  = "#4ade80"   if dark else "#087331"
-    alert_color = "#e2e8f0"   if dark else "#0f172a"
+    app_bg = "linear-gradient(135deg,#07140c,#102318)" if dark else "linear-gradient(135deg,#f4fbf6,#ffffff)"
+    app_color = "#e5f7ec" if dark else "#10201a"
+    card_bg = "#13251a" if dark else "#ffffff"
+    card_border = "#294936" if dark else "#dbe7df"
+    card_shadow = "rgba(0,0,0,.35)" if dark else "rgba(15,23,42,.08)"
+    sub_color = "#a7b9ad" if dark else "#64748b"
+    kpi_color = "#67e88f" if dark else "#087331"
+    h_color = "#d8ffe6" if dark else "#10201a"
+    inp_bg = "#0e1d14" if dark else "#ffffff"
+    inp_border = "#335944" if dark else "#cfded5"
+    inp_color = "#e5f7ec" if dark else "#10201a"
+    table_bg = "#13251a" if dark else "#ffffff"
+    table_header = "#0e1d14" if dark else "#f0fdf4"
+    alert_color = "#e5f7ec" if dark else "#10201a"
 
     st.markdown(f"""
 <style>
-/* ── App background & base text ─────────────────────────────────────── */
+/* Main app */
 .stApp {{
     background: {app_bg} !important;
     color: {app_color} !important;
 }}
-[data-testid="stAppViewContainer"] > .main {{ background: transparent !important; }}
 
-/* ── Sidebar — always dark green ────────────────────────────────────── */
+[data-testid="stAppViewContainer"] > .main {{
+    background: transparent !important;
+}}
+
+.block-container {{
+    padding-top: 2rem !important;
+    padding-bottom: 3rem !important;
+    padding-left: 2.4rem !important;
+    padding-right: 2.4rem !important;
+    max-width: 1400px !important;
+}}
+
+/* Sidebar */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg,#064d25,#033d1d) !important;
+    padding-top: 1.2rem !important;
 }}
-section[data-testid="stSidebar"] * {{ color: #ffffff !important; }}
-section[data-testid="stSidebar"] .stRadio label {{ color: #d1fae5 !important; }}
 
-/* ── Custom card ─────────────────────────────────────────────────────── */
+section[data-testid="stSidebar"] * {{
+    color: #ffffff !important;
+}}
+
+section[data-testid="stSidebar"] .stRadio > div {{
+    gap: 10px !important;
+}}
+
+section[data-testid="stSidebar"] label {{
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+}}
+
+section[data-testid="stSidebar"] label:hover {{
+    background: rgba(255,255,255,.10) !important;
+}}
+
+/* Logo */
+.logo {{
+    font-size: 30px;
+    font-weight: 900;
+    margin-bottom: 24px;
+    letter-spacing: -.5px;
+}}
+
+.logo span {{
+    color: #9df071;
+}}
+
+/* Header */
+.hero-title {{
+    font-size: 36px;
+    font-weight: 900;
+    color: {h_color};
+    margin-bottom: 6px;
+    letter-spacing: -.7px;
+}}
+
+.hero-subtitle {{
+    font-size: 16px;
+    color: {sub_color};
+    margin-bottom: 28px;
+}}
+
+/* Cards */
 .card {{
     background: {card_bg};
     border: 1px solid {card_border};
-    color: {card_color};
-    box-shadow: 0 4px 20px {card_shadow};
-    padding: 22px;
-    border-radius: 20px;
-    margin-bottom: 18px;
-    transition: background .25s, border .25s;
+    color: {app_color};
+    box-shadow: 0 10px 28px {card_shadow};
+    padding: 26px;
+    border-radius: 24px;
+    margin-bottom: 22px;
+    transition: all .25s ease;
 }}
 
-/* ── Typography ──────────────────────────────────────────────────────── */
-.logo         {{ font-size:28px; font-weight:800; margin-bottom:20px; }}
-.logo span    {{ color:{logo_accent}; }}
-.hero-title   {{ font-size:32px; font-weight:800; margin-bottom:4px; color:{app_color}; }}
-.hero-subtitle{{ font-size:15px; margin-bottom:22px; color:{sub_color}; }}
-.kpi-value    {{ font-size:38px; font-weight:800; line-height:1.1; color:{kpi_color}; }}
-h1,h2,h3,h4  {{ color:{h_color} !important; }}
+.card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px {card_shadow};
+}}
 
-/* ── Risk badges ─────────────────────────────────────────────────────── */
-.low      {{ color:#166534; background:#dcfce7; padding:5px 14px; border-radius:999px; font-weight:700; font-size:13px; }}
-.moderate {{ color:#854d0e; background:#fef9c3; padding:5px 14px; border-radius:999px; font-weight:700; font-size:13px; }}
-.high     {{ color:#991b1b; background:#fee2e2; padding:5px 14px; border-radius:999px; font-weight:700; font-size:13px; }}
+.card h4 {{
+    margin-top: 0 !important;
+    margin-bottom: 14px !important;
+    font-size: 15px !important;
+    color: {sub_color} !important;
+    font-weight: 700 !important;
+}}
 
-/* ── Predict button ──────────────────────────────────────────────────── */
-.stButton > button {{
-    background: #087331 !important;
+.kpi-value {{
+    font-size: 36px;
+    font-weight: 900;
+    color: {kpi_color};
+    line-height: 1.1;
+    margin-bottom: 12px;
+}}
+
+/* Badges */
+.low,
+.moderate,
+.high {{
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 6px;
+}}
+
+.low {{
+    color: #166534;
+    background: #dcfce7;
+}}
+
+.moderate {{
+    color: #854d0e;
+    background: #fef9c3;
+}}
+
+.high {{
+    color: #991b1b;
+    background: #fee2e2;
+}}
+
+/* Buttons */
+.stButton > button,
+.stDownloadButton > button {{
+    background: linear-gradient(135deg,#087331,#2ea85a) !important;
     color: white !important;
-    border-radius: 12px !important;
     border: none !important;
-    font-weight: 700 !important;
-    padding: .5rem 1.5rem !important;
-    transition: background .2s !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    padding: 0.65rem 1.6rem !important;
+    box-shadow: 0 8px 18px rgba(8,115,49,.25) !important;
+    transition: all .2s ease !important;
 }}
-.stButton > button:hover {{ background: #065a27 !important; }}
 
-/* ── Theme toggle button ─────────────────────────────────────────────── */
+.stButton > button:hover,
+.stDownloadButton > button:hover {{
+    transform: translateY(-1px) !important;
+    box-shadow: 0 12px 24px rgba(8,115,49,.35) !important;
+    background: linear-gradient(135deg,#065a27,#24924d) !important;
+}}
+
 .theme-toggle-btn > button {{
-    background: {toggle_bg} !important;
-    color: {toggle_txt} !important;
-    border: 1.5px solid {toggle_bdr} !important;
-    border-radius: 20px !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    padding: 4px 14px !important;
+    width: 100% !important;
+    background: rgba(255,255,255,.12) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,.28) !important;
+    border-radius: 18px !important;
+    font-weight: 800 !important;
+    padding: 0.6rem 1rem !important;
 }}
 
-/* ── Input fields ────────────────────────────────────────────────────── */
+/* Inputs */
 .stNumberInput input,
-.stTextInput  input {{
+.stTextInput input {{
     background: {inp_bg} !important;
     color: {inp_color} !important;
-    border-color: {inp_border} !important;
+    border: 1px solid {inp_border} !important;
+    border-radius: 12px !important;
+    padding: 10px 12px !important;
 }}
+
 .stSelectbox div[data-baseweb="select"] > div {{
     background: {inp_bg} !important;
     color: {inp_color} !important;
-    border-color: {inp_border} !important;
+    border: 1px solid {inp_border} !important;
+    border-radius: 12px !important;
 }}
-label {{ color: {label_color} !important; }}
 
-/* ── DataFrames ──────────────────────────────────────────────────────── */
-[data-testid="stDataFrameResizable"],
-.stDataFrame {{ background: {df_bg} !important; }}
-.stDataFrame th {{ background: {df_th_bg} !important; color: {df_th_color} !important; }}
-.stDataFrame td {{ color: {df_td_color} !important; border-color: {card_border} !important; }}
+label {{
+    color: {app_color} !important;
+    font-weight: 700 !important;
+    margin-bottom: 5px !important;
+}}
 
-/* ── Alert text ──────────────────────────────────────────────────────── */
-[data-testid="stAlertContainer"] p {{ color: {alert_color} !important; }}
+h1, h2, h3, h4 {{
+    color: {h_color} !important;
+}}
+
+.stMarkdown p {{
+    color: {app_color};
+}}
+
+[data-testid="stDataFrameResizable"] {{
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    border: 1px solid {card_border} !important;
+    background: {table_bg} !important;
+}}
+
+.stDataFrame th {{
+    background: {table_header} !important;
+    color: {h_color} !important;
+}}
+
+.stDataFrame td {{
+    color: {app_color} !important;
+}}
+
+[data-testid="stAlert"] {{
+    border-radius: 16px !important;
+    padding: 14px 18px !important;
+}}
+
+[data-testid="stAlertContainer"] p {{
+    color: {alert_color} !important;
+}}
+
+.js-plotly-plot {{
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}}
+
+@media (max-width: 768px) {{
+    .block-container {{
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }}
+    .hero-title {{
+        font-size: 28px;
+    }}
+    .kpi-value {{
+        font-size: 28px;
+    }}
+    .card {{
+        padding: 20px;
+        border-radius: 20px;
+    }}
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -383,7 +525,7 @@ page = st.sidebar.radio("Navigation", [
 st.sidebar.markdown("---")
 
 # ── Theme toggle ──────────────────────────────────────────────────────────
-toggle_label = "☀️ Light Mode" if is_dark() else "🌙 Dark Mode"
+toggle_label = "☀️ Switch to Light Mode" if is_dark() else "🌙 Switch to Dark Mode"
 st.sidebar.markdown('<div class="theme-toggle-btn">', unsafe_allow_html=True)
 if st.sidebar.button(toggle_label, key="theme_toggle"):
     st.session_state["dark_mode"] = not st.session_state["dark_mode"]
@@ -444,7 +586,7 @@ elif page == "Prediction":
                 lo, hi, med = DIABETES_RANGES[feat]
                 input_values[feat] = st.number_input(feat, value=float(med), min_value=float(lo), max_value=float(hi), key=f"dia_{feat}")
 
-    predict_btn = st.button("Predict Risk")
+    predict_btn = st.button("🔍 Predict Disease Risk")
     st.markdown('</div>', unsafe_allow_html=True)
 
     if predict_btn:
@@ -757,12 +899,26 @@ elif page == "Model Performance":
         ["Accuracy","Precision","Recall","F1-Score","ROC-AUC"],
         ["Accuracy","Precision","Recall","F1","ROC_AUC"]):
         val = bm[km]
-        css = "low" if val >= 0.85 else ("moderate" if val >= 0.70 else "high")
+        if val >= 1.0:
+            css        = "high"
+            badge_text = "⚠ Check Overfitting"
+        elif val >= 0.90:
+            css        = "low"
+            badge_text = "Excellent Performance"
+        elif val >= 0.80:
+            css        = "low"
+            badge_text = "Strong Model"
+        elif val >= 0.70:
+            css        = "moderate"
+            badge_text = "Acceptable Performance"
+        else:
+            css        = "high"
+            badge_text = "Moderate Performance"
         col.markdown(
             f'<div class="card" style="text-align:center">'
             f'<div style="font-size:13px">{label}</div>'
             f'<div class="kpi-value" style="font-size:28px">{val:.4f}</div>'
-            f'<span class="{css}">{"Excellent" if val>=0.85 else ("Good" if val>=0.70 else "Fair")}</span>'
+            f'<span class="{css}">{badge_text}</span>'
             f'</div>',
             unsafe_allow_html=True,
         )
@@ -822,8 +978,10 @@ elif page == "Model Performance":
         theme = plotly_theme()
         theme["xaxis"]["title"] = "False Positive Rate"
         theme["yaxis"]["title"] = "True Positive Rate"
+        theme["legend"]["x"] = 0.55
+        theme["legend"]["y"] = 0.1
         roc_fig.update_layout(
-            height=420, legend=dict(x=0.55, y=0.1), margin=dict(t=10,b=10,l=10,r=10),
+            height=420, margin=dict(t=10,b=10,l=10,r=10),
             **theme,
         )
         st.plotly_chart(roc_fig, key="perf_roc_curves")
@@ -894,7 +1052,7 @@ elif page == "Export / Report":
         result_df = pd.DataFrame([st.session_state["latest_result"]])
         st.dataframe(result_df, use_container_width=True)
         csv = result_df.to_csv(index=False).encode("utf-8")
-        st.download_button("Download CSV", csv, "predictcare_result.csv", "text/csv")
+        st.download_button("⬇️ Download Prediction Report", csv, "predictcare_result.csv", "text/csv")
     else:
         st.warning("No prediction result found yet. Go to Prediction page first.")
     st.error(DISCLAIMER)

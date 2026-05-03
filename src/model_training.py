@@ -94,10 +94,8 @@ def build_logistic_regression(
         )),
     ])
 
-    # Small C values enforce strong regularisation, keeping accuracy
-    # in the realistic 0.80–0.90 range instead of near-perfect.
     param_grid = {
-        "classifier__C":       [0.001, 0.005, 0.01],
+        "classifier__C":       [0.05, 0.1, 0.5],
         "classifier__penalty": ["l1", "l2"],
         "classifier__solver":  ["liblinear"],
     }
@@ -149,13 +147,11 @@ def build_random_forest(
         )),
     ])
 
-    # Shallow trees + high min_samples prevent overfitting on near-separable
-    # datasets (e.g. CKD), keeping accuracy in the 0.80–0.90 range.
     param_grid = {
-        "classifier__n_estimators":      [50, 100],
-        "classifier__max_depth":         [2, 3],
-        "classifier__min_samples_split": [10, 20],
-        "classifier__min_samples_leaf":  [5, 10],
+        "classifier__n_estimators":      [100, 200],
+        "classifier__max_depth":         [4, 6, 8],
+        "classifier__min_samples_split": [8, 12],
+        "classifier__min_samples_leaf":  [3, 5],
         "classifier__max_features":      ["sqrt"],
     }
 
@@ -221,16 +217,14 @@ def build_xgboost(
 
     pipeline  = ImbPipeline(steps)
 
-    # Constrained search: shallow depth + high alpha/lambda + slow lr
-    # prevents XGBoost from converging on a near-perfect fit.
     param_grid = {
-        "classifier__n_estimators":    [50, 100],
-        "classifier__max_depth":       [2, 3],
-        "classifier__learning_rate":   [0.005, 0.01],
-        "classifier__subsample":       [0.5, 0.6],
-        "classifier__colsample_bytree":[0.4, 0.5],
-        "classifier__reg_alpha":       [5, 10],
-        "classifier__reg_lambda":      [5, 10],
+        "classifier__n_estimators":    [100, 200],
+        "classifier__max_depth":       [3, 4],
+        "classifier__learning_rate":   [0.03, 0.05, 0.1],
+        "classifier__subsample":       [0.7, 0.8],
+        "classifier__colsample_bytree":[0.6, 0.7],
+        "classifier__reg_alpha":       [0.5, 1.0],
+        "classifier__reg_lambda":      [1.5, 2.0],
     }
 
     search = RandomizedSearchCV(
