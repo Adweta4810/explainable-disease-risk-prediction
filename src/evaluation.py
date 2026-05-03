@@ -23,8 +23,6 @@ import warnings
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score,
@@ -164,6 +162,9 @@ def plot_confusion_matrices(
     filename: str = "confusion_matrices.png",
 ) -> None:
     """Plot side-by-side confusion matrices for all models."""
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
     if class_names is None:
         class_names = ["Class 0", "Class 1"]
 
@@ -200,6 +201,8 @@ def plot_roc_curves(
     title: str = "ROC Curves — Hold-out Test Set",
 ) -> None:
     """Plot ROC curves for all models on the same axes."""
+    import matplotlib.pyplot as plt
+
     _ensure_dir(output_dir)
 
     line_styles = ["-", "--", ":"]
@@ -243,6 +246,8 @@ def plot_calibration_curves(
     filename: str = "calibration_curves.png",
 ) -> None:
     """Plot calibration curves for all models."""
+    import matplotlib.pyplot as plt
+
     _ensure_dir(output_dir)
 
     fig, axes = plt.subplots(1, len(models), figsize=(5 * len(models), 4))
@@ -278,6 +283,8 @@ def plot_feature_importances(
     Plot feature importances for tree-based models (Random Forest, XGBoost).
     Logistic Regression is skipped automatically.
     """
+    import matplotlib.pyplot as plt
+
     _ensure_dir(output_dir)
 
     # Filter to models with feature_importances_
