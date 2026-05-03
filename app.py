@@ -791,10 +791,12 @@ elif page == "Model Performance":
             marker_color=PALETTE[i],
             text=[f"{m[metric_choice]:.4f}"], textposition="outside",
         ))
+    bar_theme = plotly_theme()
+    bar_theme["yaxis"]["range"] = [0, 1.1]
+    bar_theme["yaxis"]["title"] = metric_choice
     bar_fig.update_layout(
-        yaxis=dict(range=[0, 1.1], title=metric_choice),
         showlegend=False, height=350, margin=dict(t=20,b=20),
-        **plotly_theme(),
+        **bar_theme,
     )
     st.plotly_chart(bar_fig, key="perf_bar_chart")
     st.markdown('</div>', unsafe_allow_html=True)
