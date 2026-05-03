@@ -141,6 +141,18 @@ def inject_theme_css():
 
     st.markdown(f"""
 <style>
+                header[data-testid="stHeader"] {{
+    display: none !important;
+}}
+
+div[data-testid="stToolbar"] {{
+    display: none !important;
+}}
+
+div[data-testid="stDecoration"] {{
+    display: none !important;
+}}
+
 /* Main app */
 .stApp {{
     background: {app_bg} !important;
